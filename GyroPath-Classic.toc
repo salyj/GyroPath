@@ -1,0 +1,10 @@
+## Interface: 11509
+
+## Title: Gyromatic Pathometer
+## Version: 0.1.1
+
+## Author: HKRob
+
+## SavedVariablesPerCharacter: GyroPath
+
+GyroPath.lua
