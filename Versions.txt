@@ -1,14 +1,22 @@
 --------------
+Version 0.2.0
+--------------
+
+    - Added other stat that measures miles traveled in the following:
+        - Falling using Slow Fall
+        - Any travel using Levitate
+
+--------------
 Version 0.1.1
 --------------
 
-- Quick hotfix to bring GyroPath in line with 1.15.9 interface
+    - Quick hotfix to bring GyroPath in line with 1.15.9 interface
 
 --------------
 Version 0.1.0
 --------------
 
-- Initial build for GyroPath
-- Window implementation with display for steps and distance travelled
-    - Walking, and Mount steps
-    - Swimming and Flight Path distance
+    - Initial build for GyroPath
+    - Window implementation with display for steps and distance travelled
+        - Walking, and Mount steps
+        - Swimming and Flight Path distance

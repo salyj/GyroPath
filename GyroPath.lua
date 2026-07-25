@@ -5,7 +5,7 @@ local THROTTLE     = 0.1
 local YARDS_PER_MILE = 1760
 
 local function newBuckets()
-  return { onFoot = 0, mount = 0, taxi = 0, swim = 0 }
+  return { onFoot = 0, mount = 0, taxi = 0, swim = 0, other = 0 }
 end
 
 local defaults = {
@@ -39,6 +39,14 @@ local driver = CreateFrame("Frame", "GyroPathDriver", UIParent)
 local accum = 0
 
 local function accumulate(dt)
+  if AuraUtil.FindAuraByName("Slow Fall", "player") ~= nil then
+    b = "Slow Fall"
+  elseif AuraUtil.FindAuraByName("Levitate", "player") ~= nil then
+    b = "Levitate"
+  else
+    b = nil
+  end
+  
   local speed = GetUnitSpeed("player")
   if not speed or speed <= 0 then return end
   local dist = speed * dt
@@ -47,6 +55,8 @@ local function accumulate(dt)
   local bucket
   if UnitOnTaxi("player") then
     bucket = "taxi"
+  elseif b == "Levitate" or (b == "Slow Fall" and IsFalling())  then
+    bucket = "other"
   elseif IsMounted() then
     bucket = "mount"
   elseif IsSwimming() then
@@ -69,7 +79,7 @@ end)
 local panel
 local function BuildPanel()
   panel = CreateFrame("Frame", "GyroPathFrame", UIParent, "BackdropTemplate")
-  panel:SetSize(160, 90)
+  panel:SetSize(160, 110)
   panel:SetPoint(GyroPath.ui.point, UIParent, GyroPath.ui.point, GyroPath.ui.x, GyroPath.ui.y)
   panel:SetMovable(true)
   panel:EnableMouse(true)
@@ -108,7 +118,8 @@ local function RefreshPanel()
     string.format("Steps: |cffffffff%s|r\n", steps(L.onFoot)) ..
     string.format("Mount steps: |cffffffff%s|r\n", steps(L.mount)) ..
     string.format("Flight paths: |cffffffff%s mi|r\n", miles(L.taxi)) ..
-    string.format("Swam: |cffffffff%s mi|r", miles(L.swim))
+    string.format("Swam: |cffffffff%s mi|r\n", miles(L.swim)) ..
+    string.format("Other: |cffffffff%s mi|r", miles(L.other))
   )
 end
 
@@ -119,6 +130,7 @@ local function PrintStats()
   print(string.format("  Mount steps:   %s / %s",  steps(L.mount),  steps(S.mount)))
   print(string.format("  Flight paths:  %s mi / %s mi", miles(L.taxi),   miles(S.taxi)))
   print(string.format("  Swum:          %s mi / %s mi", miles(L.swim),   miles(S.swim)))
+  print(string.format("  Other:         %s mi / %s mi", miles(L.other),  miles(S.other)))
 end
 
 SLASH_GYROPATH1 = "/GyroPath"
