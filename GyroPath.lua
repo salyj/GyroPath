@@ -39,12 +39,14 @@ local driver = CreateFrame("Frame", "GyroPathDriver", UIParent)
 local accum = 0
 
 local function accumulate(dt)
-  if AuraUtil.FindAuraByName("Slow Fall", "player") ~= nil then
-    b = "Slow Fall"
-  elseif AuraUtil.FindAuraByName("Levitate", "player") ~= nil then
-    b = "Levitate"
-  else
-    b = nil
+  if not EditModeManagerFrame:IsEditModeActive() then
+    if AuraUtil.FindAuraByName("Slow Fall", "player") ~= nil then
+      b = "Slow Fall"
+    elseif AuraUtil.FindAuraByName("Levitate", "player") ~= nil then
+      b = "Levitate"
+    else
+      b = nil
+    end
   end
   
   local speed = GetUnitSpeed("player")
