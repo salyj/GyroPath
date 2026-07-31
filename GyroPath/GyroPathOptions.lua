@@ -31,6 +31,16 @@ gp.options = function()
                     gp.showSessionStats = value
                     gp.RefreshPanel()
                 end,
+            },
+            toggleCelebrate = {
+                type = "toggle",
+                name = "Celebrate Milestones",
+                desc = "Toggle celebrating milestones - for fun",
+                order = 2,
+                get = function() return gp.celebrateMilestones end,
+                set = function(info, value)
+                    gp.celebrateMilestones = value
+                end,
             }
         }
     }
