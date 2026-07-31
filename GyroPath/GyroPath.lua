@@ -1,11 +1,25 @@
-local ADDON_NAME = ...
+local ADDON_NAME, gp = ...
 
 local STRIDE_YARDS = 1.5
 local THROTTLE     = 0.1
 local YARDS_PER_MILE = 1760
 
+local versionNum = "0.3.0"
+local isBCC = false
+
+if(string.match(GetBuildInfo(), "%d+") == "2") then
+  isBCC = true
+end
+
+gp.isBCC = isBCC
+gp.showSessionStats = false
+
 local function newBuckets()
-  return { onFoot = 0, mount = 0, taxi = 0, swim = 0, other = 0 }
+  if isBCC then
+    return { onFoot = 0, mount = 0, taxi = 0, swim = 0, flying = 0, other = 0 }
+  else
+    return { onFoot = 0, mount = 0, taxi = 0, swim = 0, other = 0 }
+  end
 end
 
 local defaults = {
@@ -35,6 +49,9 @@ end
 local function miles(yards) return string.format("%.2f", yards / YARDS_PER_MILE) end
 local function steps(yards) return comma(yards / STRIDE_YARDS) end
 
+gp.miles = miles
+gp.steps = steps
+
 local driver = CreateFrame("Frame", "GyroPathDriver", UIParent)
 local accum = 0
 
@@ -55,16 +72,33 @@ local function accumulate(dt)
 
   local L, S = GyroPath.lifetime, GyroPath.session
   local bucket
-  if UnitOnTaxi("player") then
-    bucket = "taxi"
-  elseif b == "Levitate" or (b == "Slow Fall" and IsFalling())  then
-    bucket = "other"
-  elseif IsMounted() then
-    bucket = "mount"
-  elseif IsSwimming() then
-    bucket = "swim"
+
+  if isBCC then
+    if UnitOnTaxi("player") then
+      bucket = "taxi"
+    elseif b == "Levitate" or (b == "Slow Fall" and IsFalling())  then
+      bucket = "other"
+    elseif IsFlying() then
+      bucket = "flying"
+    elseif IsMounted() then
+      bucket = "mount"
+    elseif IsSwimming() then
+      bucket = "swim"
+    else
+      bucket = "onFoot"
+    end
   else
-    bucket = "onFoot"
+    if UnitOnTaxi("player") then
+      bucket = "taxi"
+    elseif b == "Levitate" or (b == "Slow Fall" and IsFalling())  then
+      bucket = "other"
+    elseif IsMounted() then
+      bucket = "mount"
+    elseif IsSwimming() then
+      bucket = "swim"
+    else
+      bucket = "onFoot"
+    end
   end
 
   L[bucket] = L[bucket] + dist
@@ -78,60 +112,16 @@ driver:SetScript("OnUpdate", function(_, elapsed)
   accum = 0
 end)
 
-local panel
-local function BuildPanel()
-  panel = CreateFrame("Frame", "GyroPathFrame", UIParent, "BackdropTemplate")
-  panel:SetSize(160, 110)
-  panel:SetPoint(GyroPath.ui.point, UIParent, GyroPath.ui.point, GyroPath.ui.x, GyroPath.ui.y)
-  panel:SetMovable(true)
-  panel:EnableMouse(true)
-  panel:RegisterForDrag("LeftButton")
-  panel:SetScript("OnDragStart", panel.StartMoving)
-  panel:SetScript("OnDragStop", function(self)
-    self:StopMovingOrSizing()
-    local point, _, _, x, y = self:GetPoint()
-    GyroPath.ui.point, GyroPath.ui.x, GyroPath.ui.y = point, x, y
-  end)
-
-  if panel.SetBackdrop then
-    panel:SetBackdrop({
-      bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
-      edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-      tile = true, tileSize = 16, edgeSize = 16,
-      insets = { left = 4, right = 4, top = 4, bottom = 4 },
-    })
-  end
-
-  local title = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  title:SetPoint("TOP", 0, -8)
-  title:SetText("|cff33ff99GyroPath|r")
-
-  local body = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  body:SetPoint("TOPLEFT", 14, -28)
-  body:SetJustifyH("LEFT")
-  body:SetSpacing(3)
-  panel.body = body
-end
-
-local function RefreshPanel()
-  if not panel or not panel:IsShown() then return end
-  local L = GyroPath.lifetime
-  panel.body:SetText(
-    string.format("Steps: |cffffffff%s|r\n", steps(L.onFoot)) ..
-    string.format("Mount steps: |cffffffff%s|r\n", steps(L.mount)) ..
-    string.format("Flight paths: |cffffffff%s mi|r\n", miles(L.taxi)) ..
-    string.format("Swam: |cffffffff%s mi|r\n", miles(L.swim)) ..
-    string.format("Other: |cffffffff%s mi|r", miles(L.other))
-  )
-end
-
 local function PrintStats()
   local L, S = GyroPath.lifetime, GyroPath.session
   print("|cff33ff99GyroPath|r  (lifetime / this session)")
   print(string.format("  Steps on foot: %s / %s",  steps(L.onFoot), steps(S.onFoot)))
   print(string.format("  Mount steps:   %s / %s",  steps(L.mount),  steps(S.mount)))
   print(string.format("  Flight paths:  %s mi / %s mi", miles(L.taxi),   miles(S.taxi)))
-  print(string.format("  Swum:          %s mi / %s mi", miles(L.swim),   miles(S.swim)))
+  print(string.format("  Swam:          %s mi / %s mi", miles(L.swim),   miles(S.swim)))
+  if isBCC then
+    print(string.format("  Flying:        %s mi / %s mi", miles(L.flying), miles(S.flying)))
+  end
   print(string.format("  Other:         %s mi / %s mi", miles(L.other),  miles(S.other)))
 end
 
@@ -145,15 +135,17 @@ SlashCmdList.GYROPATH = function(msg)
     GyroPath.lifetime = newBuckets()
     GyroPath.session  = newBuckets()
     print("|cff33ff99GyroPath|r lifetime totals reset.")
-    RefreshPanel()
+    gp.RefreshPanel()
   elseif msg == "hide" then
     GyroPath.ui.show = false
-    if panel then panel:Hide() end
+    if gp.panel then gp.panel:Hide() end
   elseif msg == "show" then
     GyroPath.ui.show = true
-    if panel then panel:Show(); RefreshPanel() end
+    if gp.panel then gp.panel:Show(); gp.RefreshPanel() end
+  elseif msg == "version" then
+    print("|cff33ff99GyroPath|r version: " .. versionNum)
   else
-    print("|cff33ff99GyroPath|r commands: /GyroPath stats | show | hide | reset")
+    print("|cff33ff99GyroPath|r commands: /GyroPath stats | show | hide | reset | version")
   end
 end
 
@@ -164,9 +156,9 @@ init:SetScript("OnEvent", function()
   applyDefaults(defaults, GyroPath)
   GyroPath.session = newBuckets()   -- fresh session each login
 
-  BuildPanel()
-  if not GyroPath.ui.show then panel:Hide() end
+  gp.BuildPanel()
+  if not GyroPath.ui.show then gp.panel:Hide() end
 
-  C_Timer.NewTicker(0.5, RefreshPanel) -- update text twice a second
+  C_Timer.NewTicker(0.5, gp.RefreshPanel) -- update text twice a second
   print("|cff33ff99GyroPath|r loaded. Type /GyroPath for stats.")
 end)
