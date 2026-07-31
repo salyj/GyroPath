@@ -13,6 +13,11 @@ end
 
 gp.isBCC = isBCC
 gp.showSessionStats = false
+gp.celebrateMilestones = false
+
+gp.celebrations = {
+  sessionSteps = false
+}
 
 local function newBuckets()
   if isBCC then
@@ -103,6 +108,12 @@ local function accumulate(dt)
 
   L[bucket] = L[bucket] + dist
   S[bucket] = S[bucket] + dist
+
+  if S.onFoot >= 10000 and gp.celebrations.sessionSteps == false then
+    PlaySoundFile(568672, "Master")
+    print("You have taken 10,000 steps this session!")
+    gp.celebrations.sessionSteps = true
+  end
 end
 
 driver:SetScript("OnUpdate", function(_, elapsed)
@@ -155,6 +166,7 @@ init:SetScript("OnEvent", function()
   GyroPath = GyroPath or {}
   applyDefaults(defaults, GyroPath)
   GyroPath.session = newBuckets()   -- fresh session each login
+  gp.celebrations.sessionSteps = false
 
   gp.BuildPanel()
   if not GyroPath.ui.show then gp.panel:Hide() end
