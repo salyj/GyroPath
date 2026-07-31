@@ -1,0 +1,14 @@
+## Interface: 20506
+
+## Title: Gyromatic Pathometer
+## Version: 0.3.0
+
+## Author: HKRob
+
+## SavedVariablesPerCharacter: GyroPath
+
+embeds.xml
+
+GyroPathFrame.lua
+GyroPath.lua
+GyroPathOptions.lua
