@@ -11,4 +11,5 @@ embeds.xml
 
 GyroPathFrame.lua
 GyroPath.lua
+GyroPathStats.lua
 GyroPathOptions.lua

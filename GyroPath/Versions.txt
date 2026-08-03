@@ -1,4 +1,10 @@
 --------------
+Version 1.0.0
+--------------
+    - Added addon specific achievement tracking
+    - Added minimap button for easier stat viewing
+
+--------------
 Version 0.3.0
 --------------
     - Added support for BCC
