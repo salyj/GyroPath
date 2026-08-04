@@ -1,4 +1,10 @@
 --------------
+Version 1.0.1
+--------------
+    - Fixed a bug that caused miscalcluations on achievements
+    - Fixed a bog that caused achievements to fire every login
+
+--------------
 Version 1.0.0
 --------------
     - Added addon specific achievement tracking

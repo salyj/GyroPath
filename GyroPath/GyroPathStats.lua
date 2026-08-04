@@ -235,7 +235,7 @@ function gp.RefreshStatsFrame()
   end
 
   for key, row in pairs(frame.achievementRows) do
-    local earned = gp.celebrations[key] == true
+    local earned = GyroPath.celebrations[key] == true
     if earned then
       row.icon:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
       row.name:SetTextColor(0.1, 1, 0.1)
