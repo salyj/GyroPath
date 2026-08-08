@@ -39,9 +39,9 @@ gp.options = function()
                 name = "Track Session Stats",
                 desc = "Toggle between showing session stats and all time stats.",
                 order = 1,
-                get = function() return gp.showSessionStats end,
+                get = function() return GyroPath.showSessionStats end,
                 set = function(info, value)
-                    gp.showSessionStats = value
+                    GyroPath.showSessionStats = value
                     gp.RefreshPanel()
                 end,
             },
@@ -50,9 +50,9 @@ gp.options = function()
                 name = "Celebrate Milestones",
                 desc = "Toggle celebrating milestones - for fun",
                 order = 2,
-                get = function() return gp.celebrateMilestones end,
+                get = function() return GyroPath.celebrateMilestones end,
                 set = function(info, value)
-                    gp.celebrateMilestones = value
+                    GyroPath.celebrateMilestones = value
                 end,
             }
         }
@@ -100,4 +100,6 @@ gp.about = function()
     }
 end
 
-gp.CreateWindow()
+local init = CreateFrame("Frame")
+init:RegisterEvent("PLAYER_LOGIN")
+init:SetScript("OnEvent", gp.CreateWindow)
