@@ -40,7 +40,7 @@ function gp.RefreshPanel()
   if not panel or not panel:IsShown() then return end
   local L = GyroPath.lifetime
   local S = GyroPath.session
-  local stats = gp.showSessionStats and S or L
+  local stats = GyroPath.showSessionStats and S or L
 
   if gp.isBCC then
     panel.body:SetText(

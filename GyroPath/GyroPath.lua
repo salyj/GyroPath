@@ -13,8 +13,6 @@ end
 
 gp.versionNum = versionNum
 gp.isBCC = isBCC
-gp.showSessionStats = false
-gp.celebrateMilestones = false
 
 local function newCelebrations()
   return {
@@ -25,7 +23,12 @@ local function newCelebrations()
     tourDeFrance = false,         -- 5,478,000 steps on mount
     rideAroundTheWorld = false,   -- 65,706,538 miles on mount
     longDistanceSwim = false,     -- 21 miles swim
-    mileHighClub = false          -- 24,888.84 miles on flight paths
+    mileHighClub = false,         -- 24,888.84 miles on flight paths
+    coastToCoast = false,         -- 4,963,334 steps on foot (US Coast to Coast)
+    mongolMessenger = false,      -- 29,334 steps on mount in 1 session
+    hadriansMarch = false,        -- 23,467 steps on foot in 1 session
+    downTowntoUptown = false,     -- 15,723 steps on foot in a lifetime
+    fromRomeToRomantic = false    -- 806,080 steps on foot in a lifetime
   }
 end
 
@@ -38,10 +41,12 @@ local function newBuckets()
 end
 
 local defaults = {
-  lifetime     = newBuckets(),
-  session      = newBuckets(),
-  celebrations = newCelebrations(),
-  ui           = { show = true, x = 0, y = 0, point = "CENTER" },
+  lifetime            = newBuckets(),
+  session             = newBuckets(),
+  celebrations        = newCelebrations(),
+  ui                  = { show = true, x = 0, y = 0, point = "CENTER" },
+  showSessionStats    = false,
+  celebrateMilestones = true,
 }
 
 local function applyDefaults(src, dst)
@@ -90,6 +95,7 @@ local function accumulate(dt)
   local dist = speed * dt
 
   local L, S = GyroPath.lifetime, GyroPath.session
+  local celebrations = GyroPath.celebrations
   local bucket
 
   if isBCC then
@@ -124,51 +130,107 @@ local function accumulate(dt)
   S[bucket] = S[bucket] + dist
 
   if stepsUnformatted(S.onFoot) >= 10000 and GyroPath.celebrations.sessionSteps == false then
-    PlaySoundFile(568672, "Master")
-    print("|cff33ff99GyroPath|r You have taken 10,000 steps this session!")
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r You have taken 10,000 steps this session!")
+    end
     GyroPath.celebrations.sessionSteps = true
   end
 
   if milesUnformatted(L.taxi) >= 100.0 and GyroPath.celebrations.frequentFlyer == false then
-    PlaySoundFile(568672, "Master")
-    print("|cff33ff99GyroPath|r you have flown for 100 miles on Flight Paths!")
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have flown for 100 miles on Flight Paths!")
+    end
     GyroPath.celebrations.frequentFlyer = true
   end
 
   if stepsUnformatted(S.onFoot) >= 66000 and GyroPath.celebrations.marathonRunner == false then
-    PlaySoundFile(568672, "Master")
-    print("|cff33ff99GyroPath|r you have ran a marathon this session!")
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have ran a marathon this session!")
+    end
     GyroPath.celebrations.marathonRunner = true
   end
 
   if milesUnformatted(S.swim) >= 0.25 and stepsUnformatted(S.mount) >= 16368 and stepsUnformatted(S.onFoot) >= 3000 and GyroPath.celebrations.triatholete == false then
-    PlaySoundFile(568672, "Master")
-    print("|cff33ff99GyroPath|r you have done a triatholon this session!")
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have done a triatholon this session!")
+    end
     GyroPath.celebrations.triatholete = true
   end
 
   if stepsUnformatted(L.mount) >= 5478000 and GyroPath.celebrations.tourDeFrance == false then
-    PlaySoundFile(568672, "Master")
-    print("|cff33ff99GyroPath|r you have ridden the equivalent of the Tour De France on mount!")
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have ridden the equivalent of the Tour De France on mount!")
+    end
     GyroPath.celebrations.tourDeFrance = true
   end
 
   if stepsUnformatted(L.mount) >= 65706538 and GyroPath.celebrations.rideAroundTheWorld == false then
-    PlaySoundFile(568672, "Master")
-    print("|cff33ff99GyroPath|r you have circumnavigated the world on your mount!")
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have circumnavigated the world on your mount!")
+    end
     GyroPath.celebrations.rideAroundTheWorld = true
   end
 
   if milesUnformatted(L.swim) >= 21 and GyroPath.celebrations.longDistanceSwim == false then
-    PlaySoundFile(568672, "Master")
-    print("|cff33ff99GyroPath|r you have swam the distance of crossing the English Channel!")
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have swam the distance of crossing the English Channel!")
+    end
     GyroPath.celebrations.longDistanceSwim = true
   end
 
   if milesUnformatted(L.taxi) >= 28884.84 and GyroPath.celebrations.mileHighClub == false then
-    PlaySoundFile(568672, "Master")
-    print("|cff33ff99GyroPath|r you have flown around the world!")
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have flown around the world!")
+    end
     GyroPath.celebrations.mileHighClub = true
+  end
+
+  if stepsUnformatted(L.onFoot) >= 4963334 and GyroPath.celebrations.coastToCoast == false then
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have walked across the United States!")
+    end
+    GyroPath.celebrations.coastToCoast = true
+  end
+
+  if stepsUnformatted(S.mount) >= 29334 and GyroPath.celebrations.mongolMessenger == false then
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have completed the Mongol Messenger Challenge!")
+    end
+    GyroPath.celebrations.mongolMessenger = true
+  end
+
+  if stepsUnformatted(S.onFoot) >= 23467 and GyroPath.celebrations.hadriansMarch == false then
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have completed Hadrian's March!")
+    end
+    GyroPath.celebrations.hadriansMarch = true
+  end
+
+  if stepsUnformatted(L.onFoot) >= 15723 and GyroPath.celebrations.downTowntoUptown == false then
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have walked from Downtown Manhattan to Uptown Manhattan!")
+    end
+    GyroPath.celebrations.downTowntoUptown = true
+  end
+
+  if stepsUnformatted(L.onFoot) >= 806080 and GyroPath.celebrations.fromRomeToRomantic == false then
+    if GyroPath.celebrateMilestones then
+      PlaySoundFile(568672, "Master")
+      print("|cff33ff99GyroPath|r you have walked from Rome to the city of Paris!")
+    end
+    GyroPath.celebrations.fromRomeToRomantic = true
   end
 end
 

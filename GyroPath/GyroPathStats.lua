@@ -4,7 +4,7 @@ local MINIMAP_ICON   = "Interface\\Icons\\INV_Misc_Map_01"
 local MINIMAP_RADIUS = 80
 
 local BUCKET_ROWS = {
-  { key = "onFoot", label = "Steps on foot", isSteps = true  },
+  { key = "onFoot", label = "Steps on foot",  isSteps = true  },
   { key = "mount",  label = "Mount steps",    isSteps = true  },
   { key = "taxi",   label = "Flight paths",   isSteps = false },
   { key = "swim",   label = "Swam",           isSteps = false },
@@ -13,14 +13,22 @@ local BUCKET_ROWS = {
 }
 
 local ACHIEVEMENTS = {
-  { key = "sessionSteps",        name = "10,000 Steps",        desc = "Take 10,000 steps in a single session." },
-  { key = "marathonRunner",      name = "Marathon Runner",     desc = "Take 66,000 steps in a single session." },
-  { key = "triatholete",         name = "Triathlete",          desc = "In one session: swim 0.25 mi, ride a mount 6.2 mi, and take 3,000 steps on foot." },
-  { key = "frequentFlyer",       name = "Frequent Flyer",      desc = "Fly 100 lifetime miles on Flight Paths." },
-  { key = "mileHighClub",        name = "Mile High Club",      desc = "Fly 28,884.84 lifetime miles on Flight Paths." },
-  { key = "tourDeFrance",        name = "Tour de France",      desc = "Ride 2,075 lifetime miles on a mount." },
-  { key = "rideAroundTheWorld",  name = "Ride Around the World", desc = "Ride 24,888.84 lifetime miles on a mount." },
-  { key = "longDistanceSwim",    name = "Channel Swimmer",     desc = "Swim 21 lifetime miles." },
+  { key = "sessionSteps",        name = "10,000 Steps",           desc = "Take 10,000 steps in a single session." },
+  { key = "marathonRunner",      name = "Marathon Runner",        desc = "Take 66,000 steps in a single session." },
+  { key = "triatholete",         name = "Triathlete",             desc = "In one session: swim 0.25 mi, ride a mount 7,275 steps, and take 3,000 steps on foot." },
+  { key = "frequentFlyer",       name = "Frequent Flyer",         desc = "Fly 100 lifetime miles on Flight Paths." },
+  { key = "mileHighClub",        name = "Mile High Club",         desc = "Fly 28,884.84 lifetime miles on Flight Paths." },
+  { key = "tourDeFrance",        name = "Tour de France",         desc = "Ride 2,075 lifetime miles (2,434,667 steps) on a mount." },
+  { key = "rideAroundTheWorld",  name = "Ride Around the World",  desc = "Ride 24,888.84 lifetime miles (29,202,906 steps) on a mount." },
+  { key = "longDistanceSwim",    name = "Channel Swimmer",        desc = "Swim 21 lifetime miles." },
+  { key = "coastToCoast",        name = "Coast to Coast",         desc = "Walk 4,963,334 lifetime steps on foot." },
+  { key = "mongolMessenger",     name = "Mongol Messenger",       desc = "Ride 29,334 steps on a mount in a single session." },
+}
+
+local ACHIEVEMENTS_2 = {
+  { key = "hadriansMarch",       name = "Hadrian's March",        desc = "Walk 23,467 steps on foot in a single session." },
+  { key = "downTowntoUptown",    name = "Downtown to Uptown",     desc = "Walk 15,723 lifetime steps on foot." },
+  { key = "fromRomeToRomantic",  name = "From Rome to Romantic",  desc = "Walk 806,080 lifetime steps on foot." },
 }
 
 local function GetMinimapButtonOffset(angleDeg)
@@ -167,34 +175,39 @@ local function BuildStatsFrame()
     end
   end
 
-  frame.achievementRows = {}
-  local achY = -78
-  for _, ach in ipairs(ACHIEVEMENTS) do
-    local row = CreateFrame("Frame", nil, achievementsContent)
-    row:SetSize(384, 20)
-    row:SetPoint("TOPLEFT", 16, achY)
-    row:EnableMouse(true)
+  local function BuildAchievementColumn(list, x)
+    local achY = -78
+    for _, ach in ipairs(list) do
+      local row = CreateFrame("Frame", nil, achievementsContent)
+      row:SetSize(180, 20)
+      row:SetPoint("TOPLEFT", x, achY)
+      row:EnableMouse(true)
 
-    local icon = row:CreateTexture(nil, "OVERLAY")
-    icon:SetSize(16, 16)
-    icon:SetPoint("LEFT", 0, 0)
+      local icon = row:CreateTexture(nil, "OVERLAY")
+      icon:SetSize(16, 16)
+      icon:SetPoint("LEFT", 0, 0)
 
-    local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    name:SetPoint("LEFT", icon, "RIGHT", 6, 0)
-    name:SetJustifyH("LEFT")
-    name:SetText(ach.name)
+      local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+      name:SetPoint("LEFT", icon, "RIGHT", 6, 0)
+      name:SetJustifyH("LEFT")
+      name:SetText(ach.name)
 
-    row:SetScript("OnEnter", function(self)
-      GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-      GameTooltip:SetText(ach.name)
-      GameTooltip:AddLine(ach.desc, 1, 1, 1, true)
-      GameTooltip:Show()
-    end)
-    row:SetScript("OnLeave", function() GameTooltip:Hide() end)
+      row:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(ach.name)
+        GameTooltip:AddLine(ach.desc, 1, 1, 1, true)
+        GameTooltip:Show()
+      end)
+      row:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
-    frame.achievementRows[ach.key] = { def = ach, icon = icon, name = name }
-    achY = achY - 24
+      frame.achievementRows[ach.key] = { def = ach, icon = icon, name = name }
+      achY = achY - 24
+    end
   end
+
+  frame.achievementRows = {}
+  BuildAchievementColumn(ACHIEVEMENTS, 16)
+  BuildAchievementColumn(ACHIEVEMENTS_2, 214)
 
   local footer = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
   footer:SetPoint("BOTTOM", 0, 14)

@@ -1,4 +1,20 @@
 --------------
+Version 1.1.0
+--------------
+    - Added 5 additional achievements
+        - Coast to Coast - Walk the distance from US coast to coast
+        - Mongol Messenger - Ride a mount 29,334 steps, the daily treck of a Mongol Messenger
+        - Hadrian's March - Walk 20 miles (23,467 setps) the daily march of a Roman Soldier
+        - Downtown to Uptown - Walk the distance from the southern tip of Manhattan Island to it's northern most point
+        - From Rome to Romantic - Walk the distance from Rome to Paris, the romantic city of love
+
+--------------
+Version 1.0.2
+--------------
+    - Fixed a bug that caused settings to not persist after logout
+    - Corrected achievement definitions to be more clear
+
+--------------
 Version 1.0.1
 --------------
     - Fixed a bug that caused miscalcluations on achievements
