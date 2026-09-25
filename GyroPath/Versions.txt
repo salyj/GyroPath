@@ -1,4 +1,19 @@
 --------------
+Version 1.3.0
+--------------
+    - Added support for World of Warcraft Forever
+
+--------------
+Version 1.2.0
+--------------
+    - Fixed bug allowing character stats to carry over to next character after you delete and make a new character with the same name
+    - Changed the 10k steps achievement to be daily istead of session based
+        - This achievement now checks the date and if it has already triggered today on this character it will not triggered
+        - This achievement will now always show that you have gotten it after you have triggered it
+        - Every consecutive trigger after the first will add to a counter showing how many times you have gotten it
+
+
+--------------
 Version 1.1.0
 --------------
     - Added 5 additional achievements

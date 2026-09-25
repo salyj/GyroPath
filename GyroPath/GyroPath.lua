@@ -4,8 +4,10 @@ local STRIDE_YARDS = 1.5
 local THROTTLE     = 0.1
 local YARDS_PER_MILE = 1760
 
-local versionNum = "1.0.1"
+local versionNum = "1.3.0"
 local isBCC = false
+
+gp.isNewChar = false
 
 if(string.match(GetBuildInfo(), "%d+") == "2") then
   isBCC = true
@@ -14,14 +16,50 @@ end
 gp.versionNum = versionNum
 gp.isBCC = isBCC
 
+-- GyroPath.ssy/ssm/ssd/sscount track the last year/month/day the 10k-steps celebration fired and how many times.
+-- GyroPath.charId tracks the player GUID so a new character (or one reusing a deleted char's name) resets lifetime stats.
+
+local function checkDateOnLogin() -- Returns true if the date has changed since the last check. False if it hasn't.
+  local y = C_DateAndTime.GetCurrentCalendarTime().year
+  local m = C_DateAndTime.GetCurrentCalendarTime().month
+  local d = C_DateAndTime.GetCurrentCalendarTime().monthDay
+
+  if GyroPath.ssy == nil or GyroPath.ssm == nil or GyroPath.ssd == nil then
+    return true
+  else
+    if y == GyroPath.ssy and m == GyroPath.ssm and d == GyroPath.ssd then
+      return false
+    else
+      return true
+    end
+  end
+end
+
+local function checkNewCharOnLogin() -- return true if the character id does not match the previous character id of is blank. This means the character is new.
+  local charId = UnitGUID("player")
+
+  if charId ~= GyroPath.charId or GyroPath.charId == nil then
+    GyroPath.charId = charId
+    GyroPath.ssy = nil
+    GyroPath.ssm = nil
+    GyroPath.ssd = nil
+    GyroPath.sscount = nil
+    gp.isNewChar = true
+    return true
+  else
+    gp.isNewChar = false
+    return false
+  end
+end
+
 local function newCelebrations()
   return {
     sessionSteps = false,         -- 10k steps in 1 session
     frequentFlyer = false,        -- 100 miles on flight paths
     marathonRunner = false,       -- 66k steps in 1 session
-    triatholete = false,          -- .25 miles swam, 16,368 steps mounted, 3000 steps in 1 session
-    tourDeFrance = false,         -- 5,478,000 steps on mount
-    rideAroundTheWorld = false,   -- 65,706,538 miles on mount
+    triatholete = false,          -- .25 miles swam, 7,275 steps mounted, 3000 steps in 1 session
+    tourDeFrance = false,         -- 2,434,667 steps on mount
+    rideAroundTheWorld = false,   -- 24,888.84 miles on mount
     longDistanceSwim = false,     -- 21 miles swim
     mileHighClub = false,         -- 24,888.84 miles on flight paths
     coastToCoast = false,         -- 4,963,334 steps on foot (US Coast to Coast)
@@ -130,11 +168,19 @@ local function accumulate(dt)
   S[bucket] = S[bucket] + dist
 
   if stepsUnformatted(S.onFoot) >= 10000 and GyroPath.celebrations.sessionSteps == false then
-    if GyroPath.celebrateMilestones then
+    if GyroPath.celebrateMilestones and checkDateOnLogin() then
       PlaySoundFile(568672, "Master")
       print("|cff33ff99GyroPath|r You have taken 10,000 steps this session!")
+      GyroPath.ssy = C_DateAndTime.GetCurrentCalendarTime().year
+      GyroPath.ssm = C_DateAndTime.GetCurrentCalendarTime().month
+      GyroPath.ssd = C_DateAndTime.GetCurrentCalendarTime().monthDay
+      GyroPath.celebrations.sessionSteps = true
+      if GyroPath.sscount == nil then
+        GyroPath.sscount = 1
+      else
+        GyroPath.sscount = GyroPath.sscount + 1
+      end
     end
-    GyroPath.celebrations.sessionSteps = true
   end
 
   if milesUnformatted(L.taxi) >= 100.0 and GyroPath.celebrations.frequentFlyer == false then
@@ -153,7 +199,7 @@ local function accumulate(dt)
     GyroPath.celebrations.marathonRunner = true
   end
 
-  if milesUnformatted(S.swim) >= 0.25 and stepsUnformatted(S.mount) >= 16368 and stepsUnformatted(S.onFoot) >= 3000 and GyroPath.celebrations.triatholete == false then
+  if milesUnformatted(S.swim) >= 0.25 and stepsUnformatted(S.mount) >= 7275 and stepsUnformatted(S.onFoot) >= 3000 and GyroPath.celebrations.triatholete == false then
     if GyroPath.celebrateMilestones then
       PlaySoundFile(568672, "Master")
       print("|cff33ff99GyroPath|r you have done a triatholon this session!")
@@ -161,7 +207,7 @@ local function accumulate(dt)
     GyroPath.celebrations.triatholete = true
   end
 
-  if stepsUnformatted(L.mount) >= 5478000 and GyroPath.celebrations.tourDeFrance == false then
+  if stepsUnformatted(L.mount) >= 2434667 and GyroPath.celebrations.tourDeFrance == false then
     if GyroPath.celebrateMilestones then
       PlaySoundFile(568672, "Master")
       print("|cff33ff99GyroPath|r you have ridden the equivalent of the Tour De France on mount!")
@@ -169,7 +215,7 @@ local function accumulate(dt)
     GyroPath.celebrations.tourDeFrance = true
   end
 
-  if stepsUnformatted(L.mount) >= 65706538 and GyroPath.celebrations.rideAroundTheWorld == false then
+  if stepsUnformatted(L.mount) >= 29202906 and GyroPath.celebrations.rideAroundTheWorld == false then
     if GyroPath.celebrateMilestones then
       PlaySoundFile(568672, "Master")
       print("|cff33ff99GyroPath|r you have circumnavigated the world on your mount!")
@@ -264,6 +310,10 @@ SlashCmdList.GYROPATH = function(msg)
     GyroPath.lifetime = newBuckets()
     GyroPath.session  = newBuckets()
     GyroPath.celebrations = newCelebrations()
+    GyroPath.ssy = nil
+    GyroPath.ssm = nil
+    GyroPath.ssd = nil
+    GyroPath.sscount = nil
     print("|cff33ff99GyroPath|r lifetime totals reset.")
     gp.RefreshPanel()
   elseif msg == "hide" then
@@ -285,7 +335,17 @@ init:SetScript("OnEvent", function()
   GyroPath = GyroPath or {}
   applyDefaults(defaults, GyroPath)
   GyroPath.session = newBuckets()   -- fresh session each login
-  GyroPath.celebrations.sessionSteps = false
+  checkNewCharOnLogin()
+
+  if checkDateOnLogin() or gp.isNewChar then
+    GyroPath.celebrations.sessionSteps = false
+  end
+
+  if gp.isNewChar then
+    GyroPath.lifetime = newBuckets()
+    GyroPath.celebrations = newCelebrations()
+    GyroPath.sscount = 0
+  end
 
   gp.BuildPanel()
   if not GyroPath.ui.show then gp.panel:Hide() end

@@ -256,6 +256,12 @@ function gp.RefreshStatsFrame()
       row.icon:SetTexture("Interface\\Buttons\\UI-CheckBox-Up")
       row.name:SetTextColor(0.5, 0.5, 0.5)
     end
+
+    if key == "sessionSteps" and GyroPath.sscount and GyroPath.sscount > 0 then
+      row.name:SetText(row.def.name .. " x" .. GyroPath.sscount)
+    else
+      row.name:SetText(row.def.name)
+    end
   end
 end
 
