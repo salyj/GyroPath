@@ -83,7 +83,7 @@ gp.about = function()
             },
             thankYouText = {
                 type = "description",
-                name = "Thank you for using GyroPath! I hope you enjoy it. I would like to take a moment to thank a few people for assisting me on the development of this addon:\n\n    \124cff00ffffMy Wife Olivia\124r - for being an awesome partner despite her frustrations.\n    \124cff00ffffYogitime\124r - for the idea and the push to get it done.\n    \124cff00ffffDottie\124r - for letting me waste her World Buffs testing data points.\n    \124cff00ffffThe Good Vibes Fresh Coffee guild on Doomhowl\124r - You guys have been very supportive of me, thanks!\n    \124cff00ffffThe WoW addon community\124r - I ask a lot of questions, thanks for answering them and not blocking me.",
+                name = "Thank you for using GyroPath! I hope you enjoy it. I would like to take a moment to thank a few people for assisting me on the development of this addon:\n\n    \124cff00ffffMy Wife Olivia\124r - for being an awesome partner despite her frustrations.\n    \124cff00ffffYogitime\124r - for the idea and the push to get it done.\n    \124cff00ffffDottie\124r - for letting me waste her World Buffs testing data points.\n    \124cff00ffffThorn\124r - For the support and feedback provided through development.\n    \124cff00ffffThe Good Vibes Fresh Coffee guild on Doomhowl\124r - You guys have been very supportive of me, thanks!\n    \124cff00ffffThe WoW addon community\124r - I ask a lot of questions, thanks for answering them and not blocking me.",
                 order = 4,
                 fontSize = "medium",
             },

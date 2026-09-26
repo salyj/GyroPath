@@ -1,10 +1,8 @@
 local ADDON_NAME, gp = ...
 
-local STRIDE_YARDS = 1.5
 local THROTTLE     = 0.1
-local YARDS_PER_MILE = 1760
 
-local versionNum = "1.3.0"
+local versionNum = "1.3.1"
 local isBCC = false
 
 gp.isNewChar = false
@@ -98,21 +96,11 @@ local function applyDefaults(src, dst)
   end
 end
 
-local function comma(n)
-  n = math.floor(n + 0.5)
-  local s = tostring(n)
-  local out = s:reverse():gsub("(%d%d%d)", "%1,"):reverse()
-  return (out:gsub("^,", ""))
-end
-
-local function miles(yards) return string.format("%.2f", yards / YARDS_PER_MILE) end
-local function steps(yards) return comma(yards / STRIDE_YARDS) end
-
-local function milesUnformatted(yards) return yards / YARDS_PER_MILE end
-local function stepsUnformatted(yards) return yards / STRIDE_YARDS end
-
-gp.miles = miles
-gp.steps = steps
+-- Numeric formatting (steps/miles conversion) now lives in GyroPathFormat.lua so it can be
+-- unit tested standalone (see tests/GyroPathFormat_test.lua). These locals keep every call
+-- site below (accumulate(), PrintStats()) unchanged.
+local miles, steps, milesUnformatted, stepsUnformatted =
+  gp.Format.miles, gp.Format.steps, gp.Format.milesUnformatted, gp.Format.stepsUnformatted
 
 local driver = CreateFrame("Frame", "GyroPathDriver", UIParent)
 local accum = 0
@@ -129,6 +117,12 @@ local function accumulate(dt)
   end
   
   local speed = GetUnitSpeed("player")
+  if issecretvalue(speed) then
+    -- Some client/context combinations (e.g. combat on Forever) now return a
+    -- secret value here per Blizzard's Patch 12.0.0 "Secret Values" system --
+    -- we're not permitted to read it, so just skip this tick's accumulation.
+    return
+  end
   if not speed or speed <= 0 then return end
   local dist = speed * dt
 

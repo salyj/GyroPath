@@ -1,7 +1,15 @@
 local ADDON_NAME, gp = ...
 
-local MINIMAP_ICON   = "Interface\\Icons\\INV_Misc_Map_01"
-local MINIMAP_RADIUS = 80
+local MINIMAP_ICON           = "Interface\\Icons\\INV_Misc_Map_01"
+-- Padding (in pixels) added to the minimap's own half-width to get the button's orbit
+-- radius. Computed from Minimap:GetWidth() at call time (see GetMinimapButtonOffset)
+-- rather than a single hardcoded radius, since the minimap frame itself is a different
+-- size on WoW Forever (198x198, Mainline UI) than on Classic Era/BCC (140x140, legacy
+-- UI) -- confirmed via Blizzard's own shipped UI source (Gethe/wow-ui-source: classic_era,
+-- classic_anniversary, and forever branches). This value (10) reproduces the previous
+-- fixed 80px radius exactly on the 140x140 minimap (70 + 10 = 80), so Classic Era/BCC
+-- button placement is unchanged.
+local MINIMAP_BUTTON_PADDING = 10
 
 local BUCKET_ROWS = {
   { key = "onFoot", label = "Steps on foot",  isSteps = true  },
@@ -33,7 +41,8 @@ local ACHIEVEMENTS_2 = {
 
 local function GetMinimapButtonOffset(angleDeg)
   local angle = math.rad(angleDeg or 225)
-  return MINIMAP_RADIUS * math.cos(angle), MINIMAP_RADIUS * math.sin(angle)
+  local radius = (Minimap:GetWidth() / 2) + MINIMAP_BUTTON_PADDING
+  return radius * math.cos(angle), radius * math.sin(angle)
 end
 
 local function UpdateMinimapButtonPosition(button)
