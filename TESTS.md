@@ -15,8 +15,25 @@ Maintained by **Keystone**. Last updated: 2026-09-25.
 The original harness (`tests/` + vendored `luaunit`) was lost on this machine. To rebuild:
 
 - Location: `tests/` at the repo root (never inside the shipped `GyroPath/` addon folder).
-- `luaunit` vendored from `bluebird75/luaunit` (BSD).
-- Runtime: **Lua 5.1.5 built from lua.org source (Q9, option A).** Runner command to be documented in Phase 1.
+  - `tests/*_test.lua` — test suites.
+  - `tests/lib/` — vendored `luaunit.lua` 3.5 and its license, unmodified.
+  - `tests/run_all.lua` — runs every suite; exit code 0 = all pass, non-zero = failures.
+  - `tests/run.bat` — Windows wrapper for `run_all.lua`.
+- Runtime: **Lua 5.1.5 built from lua.org source (Q9, option A)**, installed at `C:\Tools\lua-5.1.5` and on PATH.
+- Run command: `tests\run.bat` (or `lua tests/run_all.lua` from the repo root). *Confirmed at Phase 1 close-out.*
+
+#### Building Lua 5.1.5 (Josiah, one-time per machine)
+
+1. Download `https://www.lua.org/ftp/lua-5.1.5.tar.gz`.
+2. Verify it in PowerShell: `Get-FileHash .\lua-5.1.5.tar.gz -Algorithm SHA256`. Compare with the checksum listed on `https://www.lua.org/ftp/`. (Expected: `2640FC56A795F29D28EF15E13C34A47E223960B0240E8CB0A82D9B0738695333`.)
+3. Extract: `tar -xzf lua-5.1.5.tar.gz` (tar is built into Windows 10/11).
+4. Open **x64 Native Tools Command Prompt for VS 2022** (Start menu → Visual Studio 2022).
+5. `cd` into the extracted `lua-5.1.5` folder (the top level, not `src`) and run `etc\luavs.bat`. Per the script's header, it builds `lua.exe`, `luac.exe`, `lua51.dll` and `lua51.lib` into `src`.
+6. Create `C:\Tools\lua-5.1.5` and copy `lua.exe`, `luac.exe` and `lua51.dll` from `src` into it (`lua.exe` needs `lua51.dll` beside it).
+7. Add `C:\Tools\lua-5.1.5` to your user PATH: Start → "Edit environment variables for your account" → `Path` → New.
+8. Open a new terminal and run `lua -v`. Expected: `Lua 5.1.5  Copyright (C) 1994-2012 Lua.org, PUC-Rio`.
+
+If any step errors, stop and bring the output to Keystone; don't work around it.
 
 #### Lua runtime options (Q9 — decided: A)
 
@@ -37,7 +54,7 @@ Note on D: LuaJIT accepts some syntax/libraries that stock Lua 5.1 in WoW does n
 
 | Suite | Module | Status | Cases |
 | --- | --- | --- | --- |
-| `GyroPathFormat_test.lua` | `GyroPathFormat.lua` | To rebuild (originally 7 tests, all passing) | `comma`: 0, < 1,000, exactly 1,000, millions, rounding at .5. `steps`: yards ÷ 1.5 with commas. `miles`: yards ÷ 1760, 2 decimals. `stepsUnformatted` / `milesUnformatted`: raw values. Legacy aliases `gp.steps` / `gp.miles` exist. |
+| `GyroPathFormat_test.lua` | `GyroPathFormat.lua` | Phase 1 — in progress | Exact expected values listed in the Phase 1 builder brief: `comma` (0, 999, 1000, 100000 — leading-comma strip, 1234567, rounding 1234.4 / 1234.5 / 999.5); `steps` (1.5 → `"1"`, 15000 → `"10,000"`); `miles` (0 → `"0.00"`, 880 → `"0.50"`, 1760 → `"1.00"`); `stepsUnformatted(3)` = 2; `milesUnformatted(3520)` = 2; constants 1.5 / 1760; `gp.steps` / `gp.miles` alias `gp.Format`. |
 | `GyroPathClient_test.lua` | `GyroPathClient.lua` | Planned (Phase 2) | Each supported interface → correct client. `SupportsFlyingMounts` true only for BCC. Unknown / patched interface behaviour per R-1 outcome. |
 | `GyroPathBucket_test.lua` | Bucket selection (D-2) | Planned (Phase 3) | Every priority branch: taxi beats everything; Levitate → other; Slow Fall only while falling → other; flying only when supported; mount; swim; default onFoot. Flying state on a client without flying mounts → falls through to mount/onFoot. |
 | `GyroPathDistance_test.lua` | Distance (D-3) | Planned (Phase 4) | 2D distance correct; z changes ignored (elevator → 0); `mapID` change → 0 and re-baseline; first sample (no previous) → 0; no movement → 0. Transport cases per R-2 outcome. |

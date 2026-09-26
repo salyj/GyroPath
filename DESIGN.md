@@ -145,6 +145,9 @@ Replace the two duplicated if/else chains in `accumulate()` with one pure functi
 | DEC-16 | Mile High Club threshold is 24,888.84 mi. | Josiah (Q8) |
 | DEC-17 | Unit tests run on stock Lua 5.1.5 built from lua.org source. | Josiah (Q9); matches WoW's Lua 5.1 |
 | DEC-18 | `Claude outputs/` at the repo root is git-ignored; briefs and reports stay local. | Josiah (Phase 0) |
+| DEC-19 | Lua 5.1.5 installed at `C:\Tools\lua-5.1.5`, on PATH. | Josiah (Phase 1) |
+| DEC-20 | Test layout: suites in `tests/`, vendored luaunit in `tests/lib/`. | Josiah (Phase 1) |
+| DEC-21 | Runner: `tests/run_all.lua` does the work; `tests/run.bat` wraps it. Suites are listed explicitly in `run_all.lua` (stock Lua 5.1 has no directory listing without extra libraries). | Josiah (Phase 1); Keystone (explicit list) |
 
 ## 8. Official sources
 

@@ -64,14 +64,15 @@ Goal: this working repo is clean, committed, and pushed so GitHub `main` becomes
 
 **Close-out (2026-09-25):** Builder (Mason) completed 0.1–0.3 and all four verification checks. Josiah committed `a29b0fc` (38 files: 8 added, 29 modified, 1 deleted) and pushed; local `main` = `origin/main`. `master` deleted on GitHub (confirmed with `git ls-remote --heads origin`). Unit tests: none exist yet (N/A). Manual test: N/A — no addon behaviour changed. One addition approved by Josiah during the phase: `Claude outputs/` added to `.gitignore` (local folder for handoff briefs/reports).
 
-## Phase 1 — Rebuild the unit test harness · *Not started* · 1.4.0
+## Phase 1 — Rebuild the unit test harness · *In progress* · 1.4.0
 
-- [ ] 1.1 Vendor `luaunit` (BSD, `bluebird75/luaunit`) outside the shipped addon folder.
-- [ ] 1.2 Rebuild `GyroPathFormat` tests (see `TESTS.md`).
-- [ ] 1.0 Josiah builds and installs Lua 5.1.5 from lua.org source (Q9, option A — steps in `TESTS.md` §2).
-- [ ] 1.3 Document how to run the tests on Windows.
+- [ ] 1.0 Josiah builds Lua 5.1.5 from lua.org source, installs to `C:\Tools\lua-5.1.5`, adds it to PATH (steps in `TESTS.md` §2).
+- [ ] 1.1 Mason vendors `luaunit` 3.5 (BSD, `bluebird75/luaunit`) into `tests/lib/`, unmodified.
+- [ ] 1.2 Mason rebuilds the `GyroPathFormat` tests in `tests/GyroPathFormat_test.lua` (cases in `TESTS.md`).
+- [ ] 1.3 Mason adds the runner: `tests/run_all.lua` (does the work) and `tests/run.bat` (Windows wrapper).
+- [ ] 1.4 Keystone documents the run command in `TESTS.md`.
 
-**Exit criteria:** suite runs green from a single command on the desktop.
+**Exit criteria:** `tests\run.bat` runs every suite green on the desktop and exits non-zero when a test fails. Manual in-game test: N/A (no addon files change).
 
 ## Phase 2 — Client identity and capability module · *Not started* · 1.4.0
 
