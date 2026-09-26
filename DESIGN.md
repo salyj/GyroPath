@@ -12,6 +12,7 @@ GyroPath (Gyromatic Pathometer) measures how far the player travels and sorts ev
 GyroPath/                 ← git repo root (not shipped)
 ├── PLAN.md DESIGN.md TESTS.md ROSTER.md BACKLOG.md
 ├── README.md LICENSE .gitignore .gitattributes
+├── Claude outputs/       ← local handoff briefs/reports (git-ignored, never committed)
 ├── tests/                ← unit tests + vendored luaunit (Phase 1; not shipped)
 └── GyroPath/             ← the addon folder WoW loads (this is what ships)
     ├── GyroPath-Classic.toc   GyroPath-BCC.toc   GyroPath_Camelot.toc
@@ -143,6 +144,7 @@ Replace the two duplicated if/else chains in `accumulate()` with one pure functi
 | DEC-15 | `main` is the only canonical branch; `master` is deleted. Desktop is the primary workspace; the laptop is secondary. | Josiah |
 | DEC-16 | Mile High Club threshold is 24,888.84 mi. | Josiah (Q8) |
 | DEC-17 | Unit tests run on stock Lua 5.1.5 built from lua.org source. | Josiah (Q9); matches WoW's Lua 5.1 |
+| DEC-18 | `Claude outputs/` at the repo root is git-ignored; briefs and reports stay local. | Josiah (Phase 0) |
 
 ## 8. Official sources
 

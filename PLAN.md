@@ -7,7 +7,7 @@ Maintained by **Keystone**. Last updated: 2026-09-25.
 | | |
 | --- | --- |
 | Current released version | **1.3.1** (CurseForge) |
-| Source of truth (target) | GitHub `salyj/GyroPath`, branch `main` — **not yet in sync** (see Phase 0) |
+| Source of truth | GitHub `salyj/GyroPath`, branch `main` — **in sync** as of `a29b0fc` (2026-09-25) |
 | Working repo | `C:\Users\hellk\WoW_Addon_Dev\GyroPath` — desktop (josiah-pc), **primary workspace** |
 | Secondary | Laptop (`WoWAddonWork\GyroPath`), used occasionally. Always pull `origin/main` before working there and push before switching back. |
 | Supported clients | Classic Era (11509), BCC Anniversary (20506), WoW Forever (16001) |
@@ -45,22 +45,24 @@ Recovered from the prior session's handoff brief and the current code.
 | 1.3.0 | "Thorn" added to About-tab credits | `GyroPathOptions.lua` |
 | 1.3.1 | Secret Values crash hotfix — `issecretvalue(speed)` guard in `accumulate()` | `GyroPath.lua`, `Versions.txt`, TOCs |
 
-**None of the above is committed yet.** GitHub `main` is at `5c6ccac` (1.3.0 commit that still has `11509, 16001` in the Classic TOC).
+All of the above was committed in Phase 0 (`a29b0fc`, "Clean up work").
 
 ---
 
-## Phase 0 — Repo cleanup and sync · *In progress* · 1.4.0
+## Phase 0 — Repo cleanup and sync · *Closed 2026-09-25* · 1.4.0
 
 Goal: this working repo is clean, committed, and pushed so GitHub `main` becomes the source of truth.
 
-- [ ] 0.1 Add `.gitattributes` at the repo root with `* -text` (decided: keep bytes as they are, no line-ending conversion).
-- [ ] 0.2 Delete `GyroPath/.sf/` and add `.sf/` to `.gitignore`.
+- [x] 0.1 Add `.gitattributes` at the repo root with `* -text` (decided: keep bytes as they are, no line-ending conversion).
+- [x] 0.2 Delete `GyroPath/.sf/` and add `.sf/` to `.gitignore`.
 - [x] 0.3 Add `PLAN.md`, `DESIGN.md`, `TESTS.md`, `ROSTER.md`, `BACKLOG.md` at the repo root.
-- [ ] 0.4 Josiah commits the full 1.3.1 state (Keystone provides the file list) and pushes to `origin/main`.
-- [ ] 0.5 Josiah deletes the `master` branch on GitHub (`main` is canonical — Q5).
+- [x] 0.4 Josiah commits the full 1.3.1 state (Keystone provides the file list) and pushes to `origin/main`.
+- [x] 0.5 Josiah deletes the `master` branch on GitHub (`main` is canonical — Q5).
 - Laptop cleanup is handled by Josiah outside this phase (Q6). The laptop's old `tests/` folder is not carried over; the harness is rebuilt here in Phase 1.
 
 **Exit criteria:** `git status` clean on desktop; GitHub `main` matches the desktop; `master` branch removed. No manual in-game test needed unless addon files change beyond what shipped in 1.3.1.
+
+**Close-out (2026-09-25):** Builder (Mason) completed 0.1–0.3 and all four verification checks. Josiah committed `a29b0fc` (38 files: 8 added, 29 modified, 1 deleted) and pushed; local `main` = `origin/main`. `master` deleted on GitHub (confirmed with `git ls-remote --heads origin`). Unit tests: none exist yet (N/A). Manual test: N/A — no addon behaviour changed. One addition approved by Josiah during the phase: `Claude outputs/` added to `.gitignore` (local folder for handoff briefs/reports).
 
 ## Phase 1 — Rebuild the unit test harness · *Not started* · 1.4.0
 
