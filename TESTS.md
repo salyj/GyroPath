@@ -16,11 +16,13 @@ The original harness (`tests/` + vendored `luaunit`) was lost on this machine. T
 
 - Location: `tests/` at the repo root (never inside the shipped `GyroPath/` addon folder).
   - `tests/*_test.lua` — test suites.
-  - `tests/lib/` — vendored `luaunit.lua` 3.5 and its license, unmodified.
+  - `tests/lib/` — vendored `luaunit.lua` 3.5 and `LICENSE.txt`, unmodified. Source: `bluebird75/luaunit` tag `LUAUNIT_V3_5` (commit `9678c933e71cb26adcdfa6cf1baceb926398eb48`). SHA-256: `luaunit.lua` `150ed14606ea66c6a02b3142dde02bdf6d48764fcd2af6bf85bfecd7d98a7d0b`; `LICENSE.txt` `9a32cabfba5e46a9c3a55cdb4961afc83206d14345e537756f83362664c82265`.
   - `tests/run_all.lua` — runs every suite; exit code 0 = all pass, non-zero = failures.
   - `tests/run.bat` — Windows wrapper for `run_all.lua`.
 - Runtime: **Lua 5.1.5 built from lua.org source (Q9, option A)**, installed at `C:\Tools\lua-5.1.5` and on PATH.
-- Run command: `tests\run.bat` (or `lua tests/run_all.lua` from the repo root). *Confirmed at Phase 1 close-out.*
+- **Run command:** `tests\run.bat` — works from any directory. Equivalent: `lua tests/run_all.lua` from the repo root. Exit code 0 = all pass; non-zero = any failure. Luaunit options pass through (e.g. `tests\run.bat -v`).
+- **Adding a suite:** add its path to the explicit `suites` list in `tests/run_all.lua` (DEC-21).
+- **Who runs what:** agent shells cannot execute Windows programs on Josiah's desktop. Josiah runs `tests\run.bat` (and any other Windows executable) for every phase's verification and reports the output. Keystone may cross-check on stock Lua 5.1.5 in its own environment.
 
 #### Building Lua 5.1.5 (Josiah, one-time per machine)
 
@@ -54,7 +56,7 @@ Note on D: LuaJIT accepts some syntax/libraries that stock Lua 5.1 in WoW does n
 
 | Suite | Module | Status | Cases |
 | --- | --- | --- | --- |
-| `GyroPathFormat_test.lua` | `GyroPathFormat.lua` | Phase 1 — in progress | Exact expected values listed in the Phase 1 builder brief: `comma` (0, 999, 1000, 100000 — leading-comma strip, 1234567, rounding 1234.4 / 1234.5 / 999.5); `steps` (1.5 → `"1"`, 15000 → `"10,000"`); `miles` (0 → `"0.00"`, 880 → `"0.50"`, 1760 → `"1.00"`); `stepsUnformatted(3)` = 2; `milesUnformatted(3520)` = 2; constants 1.5 / 1760; `gp.steps` / `gp.miles` alias `gp.Format`. |
+| `GyroPathFormat_test.lua` | `GyroPathFormat.lua` | **19 tests, passing** (Phase 1) | Exact expected values listed in the Phase 1 builder brief: `comma` (0, 999, 1000, 100000 — leading-comma strip, 1234567, rounding 1234.4 / 1234.5 / 999.5); `steps` (1.5 → `"1"`, 15000 → `"10,000"`); `miles` (0 → `"0.00"`, 880 → `"0.50"`, 1760 → `"1.00"`); `stepsUnformatted(3)` = 2; `milesUnformatted(3520)` = 2; constants 1.5 / 1760; `gp.steps` / `gp.miles` alias `gp.Format`. |
 | `GyroPathClient_test.lua` | `GyroPathClient.lua` | Planned (Phase 2) | Each supported interface → correct client. `SupportsFlyingMounts` true only for BCC. Unknown / patched interface behaviour per R-1 outcome. |
 | `GyroPathBucket_test.lua` | Bucket selection (D-2) | Planned (Phase 3) | Every priority branch: taxi beats everything; Levitate → other; Slow Fall only while falling → other; flying only when supported; mount; swim; default onFoot. Flying state on a client without flying mounts → falls through to mount/onFoot. |
 | `GyroPathDistance_test.lua` | Distance (D-3) | Planned (Phase 4) | 2D distance correct; z changes ignored (elevator → 0); `mapID` change → 0 and re-baseline; first sample (no previous) → 0; no movement → 0. Transport cases per R-2 outcome. |
@@ -82,7 +84,13 @@ Run on each client: **Classic Era (11509)**, **BCC Anniversary (20506)**, **Fore
 | M-15 | Edit Mode (Forever) | No errors or lockups while Edit Mode is open. |
 | M-16 | Achievements tab, hover Mile High Club (1.4.0+) | Tooltip reads 24,888.84 lifetime miles. |
 
-### Results log
+### Unit test results log
+
+| Date | Phase | Result |
+| --- | --- | --- |
+| 2026-09-26 | Phase 1 | 19/19 pass (desktop, Lua 5.1.5); red run verified exit 1 |
+
+### Manual test results log
 
 | Version | Classic Era | BCC Anniversary | Forever | Notes |
 | --- | --- | --- | --- | --- |

@@ -64,15 +64,17 @@ Goal: this working repo is clean, committed, and pushed so GitHub `main` becomes
 
 **Close-out (2026-09-25):** Builder (Mason) completed 0.1–0.3 and all four verification checks. Josiah committed `a29b0fc` (38 files: 8 added, 29 modified, 1 deleted) and pushed; local `main` = `origin/main`. `master` deleted on GitHub (confirmed with `git ls-remote --heads origin`). Unit tests: none exist yet (N/A). Manual test: N/A — no addon behaviour changed. One addition approved by Josiah during the phase: `Claude outputs/` added to `.gitignore` (local folder for handoff briefs/reports).
 
-## Phase 1 — Rebuild the unit test harness · *In progress* · 1.4.0
+## Phase 1 — Rebuild the unit test harness · *Closed 2026-09-26* · 1.4.0
 
-- [ ] 1.0 Josiah builds Lua 5.1.5 from lua.org source, installs to `C:\Tools\lua-5.1.5`, adds it to PATH (steps in `TESTS.md` §2).
-- [ ] 1.1 Mason vendors `luaunit` 3.5 (BSD, `bluebird75/luaunit`) into `tests/lib/`, unmodified.
-- [ ] 1.2 Mason rebuilds the `GyroPathFormat` tests in `tests/GyroPathFormat_test.lua` (cases in `TESTS.md`).
-- [ ] 1.3 Mason adds the runner: `tests/run_all.lua` (does the work) and `tests/run.bat` (Windows wrapper).
-- [ ] 1.4 Keystone documents the run command in `TESTS.md`.
+- [x] 1.0 Josiah builds Lua 5.1.5 from lua.org source, installs to `C:\Tools\lua-5.1.5`, adds it to PATH (steps in `TESTS.md` §2).
+- [x] 1.1 Mason vendors `luaunit` 3.5 (BSD, `bluebird75/luaunit`) into `tests/lib/`, unmodified.
+- [x] 1.2 Mason rebuilds the `GyroPathFormat` tests in `tests/GyroPathFormat_test.lua` (cases in `TESTS.md`).
+- [x] 1.3 Mason adds the runner: `tests/run_all.lua` (does the work) and `tests/run.bat` (Windows wrapper).
+- [x] 1.4 Keystone documents the run command in `TESTS.md`.
 
 **Exit criteria:** `tests\run.bat` runs every suite green on the desktop and exits non-zero when a test fails. Manual in-game test: N/A (no addon files change).
+
+**Close-out (2026-09-26):** Mason vendored luaunit `LUAUNIT_V3_5` and wrote 19 tests (17 brief cases; cases 16 and 17 are two tests each). Josiah ran every Windows check: green 19/19 with exit 0 from the repo root and from `C:\`; deliberate failure reported by name with exit 1, then reverted; `lua tests/run_all.lua` green. Keystone independently re-ran the suite on stock Lua 5.1.5: 19/19 green, and exit 1 on a deliberate failure; SHA-256 of both vendored files re-checked. Scope: only `tests/` added. Manual in-game test: N/A.
 
 ## Phase 2 — Client identity and capability module · *Not started* · 1.4.0
 

@@ -6,7 +6,7 @@ Each agent has exactly one role and is responsible for that role and nothing mor
 
 | Name | Role | Owns | Does not |
 | --- | --- | --- | --- |
-| **Josiah** | Project owner / stakeholder | All decisions and scope. All git commits and pushes. CurseForge releases. Manual in-game testing on every supported client. | — |
+| **Josiah** | Project owner / stakeholder | All decisions and scope. All git commits and pushes. CurseForge releases. Manual in-game testing on every supported client. Running Windows executables for verification (e.g. `tests\run.bat`) and reporting output. | — |
 | **Keystone** | Lead architect | `PLAN.md`, `DESIGN.md`, `TESTS.md`, `ROSTER.md`, `BACKLOG.md`. Research (official sources only). Design proposals with options. Builder handoff briefs. Kickoff and close-out conversation for every feature. | Write code. Commit to the repo. Make decisions on Josiah's behalf. |
 | **Mason** | Builder (implementation) | Code and unit-test changes described in the current handoff brief. Running the unit test suite. Reporting the full list of changed files. | Change scope or design. Edit the canonical docs (reports anything doc-relevant to Keystone instead). Commit to the repo. |
 
@@ -17,6 +17,7 @@ Keystone or Mason may spin up a sub-agent when it saves time. Each sub-agent get
 ## Tooling notes
 
 - Agents running git inside a sandbox use `git --no-optional-locks status` (read-only checks must not leave a `.git/index.lock` behind).
+- Agent shells on Josiah's desktop run in an isolated Linux VM and cannot run Windows executables; any check that needs one is run by Josiah.
 - Local `origin/master` tracking refs may linger after the remote branch deletion; `git fetch --prune` clears them.
 
 ## Working loop (every feature / session)
